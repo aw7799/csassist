@@ -1,0 +1,7 @@
+{
+  "id": "network-vpn",
+  "title": "Connect to the company VPN",
+  "category": "network",
+  "tags": ["vpn", "connection", "remote", "network"],
+  "body": "# Connect to the company VPN\n\nTo access internal resources remotely:\n\n1. Install the VPN client from the company software portal.\n2. Open the client and enter your company email and password.\n3. Approve the MFA push notification sent to your phone.\n4. Once connected, you'll see a green status indicator in the client.\n\nIf the connection fails immediately, check that you're not already connected to another VPN, and confirm your internet connection is stable. Persistent failures should be reported to IT with the error code shown in the client."
+}

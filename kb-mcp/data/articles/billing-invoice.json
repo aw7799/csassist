@@ -1,0 +1,7 @@
+{
+  "id": "billing-invoice",
+  "title": "Understand your monthly invoice",
+  "category": "billing",
+  "tags": ["invoice", "billing", "charges", "payment"],
+  "body": "# Understand your monthly invoice\n\nYour monthly invoice is available under **Billing > Invoices**.\n\nEach invoice lists:\n- **Subscription fee** — your current plan's base cost.\n- **Usage charges** — any metered usage beyond your plan's included allowance.\n- **Taxes** — calculated based on your billing address.\n- **Credits or discounts** — applied automatically if you have an active promotion.\n\nInvoices are generated on the same day each month, matching your original subscription start date. If a charge looks incorrect, see the refund article or contact support with the invoice number."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "widget-basics",
+  "title": "Widget basics",
+  "category": "alpha",
+  "tags": ["widget", "basics"],
+  "body": "A widget is the basic building block. This widget guide explains how a widget works, why widgets matter, and how to configure your first widget."
+}

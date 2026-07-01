@@ -1,0 +1,7 @@
+{
+  "id": "mfa-setup",
+  "title": "Set up multi-factor authentication (MFA)",
+  "category": "account",
+  "tags": ["mfa", "2fa", "authenticator", "security", "account"],
+  "body": "# Set up multi-factor authentication (MFA)\n\nMFA adds a second layer of protection to your account beyond your password.\n\n1. Go to **Account Settings > Security**.\n2. Click **Enable MFA**.\n3. Scan the QR code with an authenticator app (Google Authenticator, Authy, or similar).\n4. Enter the 6-digit code shown in the app to confirm setup.\n5. Save the provided backup codes somewhere safe in case you lose access to your device.\n\nOnce enabled, you'll be asked for a code from your authenticator app each time you log in from a new device."
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CSAssist KB Article",
+  "type": "object",
+  "required": ["id", "title", "category", "body", "tags"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Kebab-case unique identifier, matches the JSON filename without extension (e.g. 'password-reset').",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Action-oriented title, e.g. 'Reset your password'."
+    },
+    "category": {
+      "type": "string",
+      "description": "One of: account, billing, network, hardware, software, security."
+    },
+    "body": {
+      "type": "string",
+      "description": "Markdown article content."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lowercase keywords used to boost search relevance."
+    }
+  }
+}

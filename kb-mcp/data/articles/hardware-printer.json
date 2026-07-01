@@ -1,0 +1,7 @@
+{
+  "id": "hardware-printer",
+  "title": "Fix a printer that won't print",
+  "category": "hardware",
+  "tags": ["printer", "print", "hardware", "driver"],
+  "body": "# Fix a printer that won't print\n\nIf your print jobs are stuck or nothing happens when you print:\n\n1. Check that the printer is powered on and has paper and ink/toner.\n2. Confirm the printer shows as **Online** in your system's printer settings.\n3. Clear the print queue and resend the job.\n4. Reinstall or update the printer driver from the manufacturer's site.\n5. Try printing a test page directly from the printer's control panel to rule out a hardware fault.\n\nIf the test page also fails, the printer likely needs a service ticket with IT/facilities."
+}

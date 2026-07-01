@@ -1,0 +1,7 @@
+{
+  "id": "billing-refund",
+  "title": "Request a refund for a billing error",
+  "category": "billing",
+  "tags": ["refund", "billing", "dispute", "charge"],
+  "body": "# Request a refund for a billing error\n\nIf you were charged incorrectly:\n\n1. Go to **Billing > Invoices** and locate the disputed charge.\n2. Click **Report an issue** next to the invoice line item.\n3. Choose a reason (duplicate charge, wrong amount, unused service, other) and add details.\n4. Submit the request — most refund requests are reviewed within 3 business days.\n\nApproved refunds are issued to the original payment method and typically appear within 5-10 business days, depending on your bank."
+}

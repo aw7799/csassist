@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "kb": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "./kb-mcp/build/index.js"
+      ],
+      "env": {}
+    }
+  }
+}

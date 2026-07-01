@@ -1,0 +1,7 @@
+{
+  "id": "security-phishing",
+  "title": "Recognize and report phishing emails",
+  "category": "security",
+  "tags": ["phishing", "security", "email", "scam"],
+  "body": "# Recognize and report phishing emails\n\nPhishing emails often impersonate trusted senders to steal credentials or install malware. Warning signs include:\n\n- Urgent or threatening language demanding immediate action.\n- Sender addresses that look similar to, but not exactly like, a legitimate domain.\n- Links that don't match their displayed text when you hover over them.\n- Requests for passwords, MFA codes, or payment details via email.\n\nIf you receive a suspicious email:\n\n1. Do not click any links or open attachments.\n2. Use the **Report phishing** button in your email client.\n3. Delete the email after reporting.\n\nIf you already clicked a link or entered credentials, reset your password immediately and contact security."
+}

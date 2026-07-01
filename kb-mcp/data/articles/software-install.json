@@ -1,0 +1,7 @@
+{
+  "id": "software-install",
+  "title": "Install or update approved software",
+  "category": "software",
+  "tags": ["software", "install", "update", "app"],
+  "body": "# Install or update approved software\n\nAll company-approved software is available through the software portal (not from external websites):\n\n1. Open the software portal from your desktop or start menu.\n2. Search for the application by name.\n3. Click **Install** — most installs complete silently in the background.\n4. For updates, the portal automatically pushes critical updates; optional updates can be triggered manually from the **Updates** tab.\n\nIf an application you need isn't listed in the portal, submit a software request ticket describing the business need — unapproved software cannot be installed directly due to security policy."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "hardware-device-setup",
+  "title": "Set up a new laptop or peripheral device",
+  "category": "hardware",
+  "tags": ["hardware", "setup", "device", "onboarding"],
+  "body": "# Set up a new laptop or peripheral device\n\nWhen you receive a new laptop or peripheral (monitor, dock, headset):\n\n1. Unbox and connect the device, then power it on.\n2. For laptops, sign in with your company account and let the mobile device management (MDM) profile install — this may take 15-20 minutes.\n3. Verify required software (VPN client, security agent, productivity suite) installed automatically; if not, use the company software portal.\n4. For peripherals, install any manufacturer drivers listed on the software portal.\n\nIf the MDM profile fails to install or a peripheral isn't recognized after a restart, open a hardware ticket with IT including the device's asset tag."
+}

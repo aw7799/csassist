@@ -1,0 +1,7 @@
+{
+  "id": "gadget-guide",
+  "title": "Gadget guide",
+  "category": "beta",
+  "tags": ["gadget"],
+  "body": "A gadget is a small device. Some gadgets are built from a widget internally, but that's an implementation detail."
+}

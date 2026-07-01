@@ -1,0 +1,7 @@
+{
+  "id": "subscription-cancel",
+  "title": "Cancel or downgrade your subscription",
+  "category": "billing",
+  "tags": ["subscription", "cancel", "downgrade", "plan"],
+  "body": "# Cancel or downgrade your subscription\n\nTo change your subscription plan:\n\n1. Go to **Billing > Subscription**.\n2. Click **Change plan** to downgrade, or **Cancel subscription** to end it.\n3. Downgrades take effect at the start of your next billing cycle; cancellations remain active until the end of the current paid period.\n4. Confirm the change — you'll receive an email confirmation.\n\nCancelling does not delete your account or data; you can resubscribe at any time from the same page."
+}

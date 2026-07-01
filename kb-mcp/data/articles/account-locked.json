@@ -1,0 +1,7 @@
+{
+  "id": "account-locked",
+  "title": "Unlock your account after failed login attempts",
+  "category": "account",
+  "tags": ["locked", "lockout", "login", "security", "account"],
+  "body": "# Unlock your account after failed login attempts\n\nAfter 5 consecutive failed login attempts, your account is temporarily locked for 15 minutes to protect against unauthorized access.\n\n1. Wait 15 minutes and try logging in again, or\n2. Click **Unlock account** on the login page to receive an unlock link by email.\n3. Follow the link to unlock your account immediately.\n\nIf you're certain someone else attempted to log in as you, reset your password after unlocking and report the incident to support."
+}

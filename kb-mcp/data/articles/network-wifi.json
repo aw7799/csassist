@@ -1,0 +1,7 @@
+{
+  "id": "network-wifi",
+  "title": "Troubleshoot Wi-Fi connectivity issues",
+  "category": "network",
+  "tags": ["wifi", "wireless", "connectivity", "network"],
+  "body": "# Troubleshoot Wi-Fi connectivity issues\n\nIf your device won't connect to Wi-Fi or keeps dropping:\n\n1. Toggle Wi-Fi off and back on.\n2. Forget the network and reconnect, re-entering the password if prompted.\n3. Restart your device.\n4. Move closer to the access point to rule out signal strength issues.\n5. Restart your router or access point if other devices are also affected.\n\nIf the issue persists across multiple devices in the same location, it's likely an access point or ISP issue — contact IT or your network provider."
+}
