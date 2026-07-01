@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": ["Bash(./mvnw *)", "Bash(npm *)", "Bash(git diff*)"],
+    "deny": ["Read(./**/.env)"]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/verify.sh", "timeout": 180 }
+        ]
+      }
+    ]
+  }
+}
