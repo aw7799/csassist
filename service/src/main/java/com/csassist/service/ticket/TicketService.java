@@ -1,5 +1,11 @@
 package com.csassist.service.ticket;
 
+import com.csassist.service.enrichment.EnrichmentClient;
+import com.csassist.service.enrichment.SuggestedArticle;
+import com.csassist.service.enrichment.TicketSuggestedArticle;
+import com.csassist.service.enrichment.TicketSuggestedArticleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,12 +15,19 @@ import java.util.List;
 @Service
 public class TicketService {
 
+    private static final Logger log = LoggerFactory.getLogger(TicketService.class);
+
     private final TicketRepository ticketRepository;
     private final TicketAuditEntryRepository auditEntryRepository;
+    private final EnrichmentClient enrichmentClient;
+    private final TicketSuggestedArticleRepository suggestedArticleRepository;
 
-    public TicketService(TicketRepository ticketRepository, TicketAuditEntryRepository auditEntryRepository) {
+    public TicketService(TicketRepository ticketRepository, TicketAuditEntryRepository auditEntryRepository,
+                          EnrichmentClient enrichmentClient, TicketSuggestedArticleRepository suggestedArticleRepository) {
         this.ticketRepository = ticketRepository;
         this.auditEntryRepository = auditEntryRepository;
+        this.enrichmentClient = enrichmentClient;
+        this.suggestedArticleRepository = suggestedArticleRepository;
     }
 
     public List<Ticket> list() {
@@ -33,7 +46,26 @@ public class TicketService {
         Instant now = Instant.now();
         ticket.setCreatedAt(now);
         ticket.setUpdatedAt(now);
-        return ticketRepository.save(ticket);
+        Ticket saved = ticketRepository.save(ticket);
+        enrich(saved);
+        return saved;
+    }
+
+    private void enrich(Ticket ticket) {
+        try {
+            List<SuggestedArticle> suggestions = enrichmentClient.suggestArticles(ticket.getTitle(), ticket.getDescription());
+            for (SuggestedArticle suggestion : suggestions) {
+                TicketSuggestedArticle entity = new TicketSuggestedArticle();
+                entity.setTicketId(ticket.getId());
+                entity.setArticleId(suggestion.articleId());
+                entity.setTitle(suggestion.title());
+                entity.setCategory(suggestion.category());
+                entity.setReason(suggestion.reason());
+                suggestedArticleRepository.save(entity);
+            }
+        } catch (Exception ex) {
+            log.warn("Enrichment failed for ticket {}: {}", ticket.getId(), ex.getMessage(), ex);
+        }
     }
 
     public Ticket update(Long id, Ticket updates) {
@@ -77,5 +109,10 @@ public class TicketService {
     public List<TicketAuditEntry> history(Long id) {
         getById(id);
         return auditEntryRepository.findByTicketIdOrderByChangedAtAscIdAsc(id);
+    }
+
+    public List<TicketSuggestedArticle> suggestions(Long id) {
+        getById(id);
+        return suggestedArticleRepository.findByTicketIdOrderByIdAsc(id);
     }
 }

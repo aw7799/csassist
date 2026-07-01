@@ -4,6 +4,7 @@ import com.csassist.service.ticket.Ticket;
 import com.csassist.service.ticket.TicketService;
 import com.csassist.service.ticket.dto.AuditEntryResponse;
 import com.csassist.service.ticket.dto.StatusChangeRequest;
+import com.csassist.service.ticket.dto.SuggestionResponse;
 import com.csassist.service.ticket.dto.TicketRequest;
 import com.csassist.service.ticket.dto.TicketResponse;
 import com.csassist.service.ticket.dto.TicketUpdateRequest;
@@ -71,5 +72,10 @@ public class TicketRestController {
     @GetMapping("/{id}/history")
     public List<AuditEntryResponse> history(@PathVariable Long id) {
         return ticketService.history(id).stream().map(TicketMapper::toAuditResponse).toList();
+    }
+
+    @GetMapping("/{id}/suggestions")
+    public List<SuggestionResponse> suggestions(@PathVariable Long id) {
+        return ticketService.suggestions(id).stream().map(TicketMapper::toSuggestionResponse).toList();
     }
 }

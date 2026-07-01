@@ -1,12 +1,20 @@
 package com.csassist.service.ticket.web;
 
+import com.csassist.service.enrichment.EnrichmentClient;
+import com.csassist.service.enrichment.SuggestedArticle;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -21,6 +29,9 @@ class TicketApiIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private EnrichmentClient enrichmentClient;
 
     private String createTicket(String title) throws Exception {
         return mockMvc.perform(post("/api/tickets")
@@ -163,5 +174,40 @@ class TicketApiIntegrationTest {
 
         mockMvc.perform(get("/api/tickets/999999/history"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createPersistsSuggestionsAndSuggestionsEndpointReturnsThem() throws Exception {
+        when(enrichmentClient.suggestArticles(anyString(), any())).thenReturn(List.of(
+                new SuggestedArticle("password-reset", "Reset your password", "account", "matches ticket about login issues")
+        ));
+
+        String location = mockMvc.perform(post("/api/tickets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Cannot log in\",\"description\":\"forgot password\",\"assignee\":\"alice\"}"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getHeader("Location");
+
+        mockMvc.perform(get(location + "/suggestions"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].articleId").value("password-reset"))
+                .andExpect(jsonPath("$[0].title").value("Reset your password"))
+                .andExpect(jsonPath("$[0].category").value("account"));
+    }
+
+    @Test
+    void createSucceedsAndSuggestionsEmptyWhenEnrichmentClientThrows() throws Exception {
+        when(enrichmentClient.suggestArticles(anyString(), any())).thenThrow(new RuntimeException("llm down"));
+
+        String location = mockMvc.perform(post("/api/tickets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Enrichment failure ticket\",\"assignee\":\"alice\"}"))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getHeader("Location");
+
+        mockMvc.perform(get(location + "/suggestions"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
     }
 }

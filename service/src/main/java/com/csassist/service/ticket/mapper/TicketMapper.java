@@ -1,8 +1,10 @@
 package com.csassist.service.ticket.mapper;
 
+import com.csassist.service.enrichment.TicketSuggestedArticle;
 import com.csassist.service.ticket.Ticket;
 import com.csassist.service.ticket.TicketAuditEntry;
 import com.csassist.service.ticket.dto.AuditEntryResponse;
+import com.csassist.service.ticket.dto.SuggestionResponse;
 import com.csassist.service.ticket.dto.TicketRequest;
 import com.csassist.service.ticket.dto.TicketResponse;
 import com.csassist.service.ticket.dto.TicketUpdateRequest;
@@ -50,6 +52,18 @@ public final class TicketMapper {
                 entry.getChangedBy(),
                 entry.getChangedAt(),
                 entry.getNote()
+        );
+    }
+
+    public static SuggestionResponse toSuggestionResponse(TicketSuggestedArticle suggestion) {
+        return new SuggestionResponse(
+                suggestion.getId(),
+                suggestion.getTicketId(),
+                suggestion.getArticleId(),
+                suggestion.getTitle(),
+                suggestion.getCategory(),
+                suggestion.getReason(),
+                suggestion.getCreatedAt()
         );
     }
 }

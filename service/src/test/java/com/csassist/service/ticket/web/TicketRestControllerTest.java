@@ -1,5 +1,6 @@
 package com.csassist.service.ticket.web;
 
+import com.csassist.service.enrichment.TicketSuggestedArticle;
 import com.csassist.service.ticket.IllegalTransitionException;
 import com.csassist.service.ticket.Ticket;
 import com.csassist.service.ticket.TicketAuditEntry;
@@ -217,6 +218,34 @@ class TicketRestControllerTest {
         when(ticketService.history(99L)).thenThrow(new TicketNotFoundException(99L));
 
         mockMvc.perform(get("/api/tickets/99/history"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void suggestionsReturns200WithEntries() throws Exception {
+        TicketSuggestedArticle suggestion = new TicketSuggestedArticle();
+        suggestion.setId(1L);
+        suggestion.setTicketId(1L);
+        suggestion.setArticleId("password-reset");
+        suggestion.setTitle("Reset your password");
+        suggestion.setCategory("account");
+        suggestion.setReason("matches login issue");
+        suggestion.setCreatedAt(Instant.parse("2026-01-01T00:00:00Z"));
+        when(ticketService.suggestions(1L)).thenReturn(List.of(suggestion));
+
+        mockMvc.perform(get("/api/tickets/1/suggestions"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].articleId").value("password-reset"))
+                .andExpect(jsonPath("$[0].title").value("Reset your password"))
+                .andExpect(jsonPath("$[0].category").value("account"));
+    }
+
+    @Test
+    void suggestionsReturns404WhenMissing() throws Exception {
+        when(ticketService.suggestions(99L)).thenThrow(new TicketNotFoundException(99L));
+
+        mockMvc.perform(get("/api/tickets/99/suggestions"))
                 .andExpect(status().isNotFound());
     }
 }

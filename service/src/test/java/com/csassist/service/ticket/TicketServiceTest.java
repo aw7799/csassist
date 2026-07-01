@@ -1,5 +1,9 @@
 package com.csassist.service.ticket;
 
+import com.csassist.service.enrichment.EnrichmentClient;
+import com.csassist.service.enrichment.SuggestedArticle;
+import com.csassist.service.enrichment.TicketSuggestedArticle;
+import com.csassist.service.enrichment.TicketSuggestedArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -29,11 +36,18 @@ class TicketServiceTest {
     @Mock
     private TicketAuditEntryRepository auditEntryRepository;
 
+    @Mock
+    private EnrichmentClient enrichmentClient;
+
+    @Mock
+    private TicketSuggestedArticleRepository suggestedArticleRepository;
+
     private TicketService ticketService;
 
     @BeforeEach
     void setUp() {
-        ticketService = new TicketService(ticketRepository, auditEntryRepository);
+        ticketService = new TicketService(ticketRepository, auditEntryRepository, enrichmentClient, suggestedArticleRepository);
+        lenient().when(enrichmentClient.suggestArticles(anyString(), nullable(String.class))).thenReturn(List.of());
     }
 
     @Test
@@ -230,6 +244,94 @@ class TicketServiceTest {
         when(ticketRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> ticketService.history(99L))
+                .isInstanceOf(TicketNotFoundException.class);
+    }
+
+    @Test
+    void createCallsEnrichmentClientWithTitleAndDescription() {
+        Ticket ticket = new Ticket();
+        ticket.setTitle("Printer jam");
+        ticket.setDescription("Paper stuck on floor 3");
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ticketService.create(ticket);
+
+        verify(enrichmentClient, times(1)).suggestArticles("Printer jam", "Paper stuck on floor 3");
+    }
+
+    @Test
+    void createPersistsReturnedSuggestionsAgainstNewTicketId() {
+        Ticket ticket = new Ticket();
+        ticket.setTitle("Cannot log in");
+        ticket.setDescription("User forgot password");
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> {
+            Ticket saved = invocation.getArgument(0);
+            saved.setId(42L);
+            return saved;
+        });
+        when(enrichmentClient.suggestArticles("Cannot log in", "User forgot password")).thenReturn(List.of(
+                new SuggestedArticle("password-reset", "Reset your password", "account", "matches login issue"),
+                new SuggestedArticle("account-locked", "Unlock your account", "account", "matches login issue")
+        ));
+
+        ticketService.create(ticket);
+
+        ArgumentCaptor<TicketSuggestedArticle> captor = ArgumentCaptor.forClass(TicketSuggestedArticle.class);
+        verify(suggestedArticleRepository, times(2)).save(captor.capture());
+        List<TicketSuggestedArticle> saved = captor.getAllValues();
+        assertThat(saved.get(0).getTicketId()).isEqualTo(42L);
+        assertThat(saved.get(0).getArticleId()).isEqualTo("password-reset");
+        assertThat(saved.get(0).getTitle()).isEqualTo("Reset your password");
+        assertThat(saved.get(0).getCategory()).isEqualTo("account");
+        assertThat(saved.get(0).getReason()).isEqualTo("matches login issue");
+        assertThat(saved.get(1).getTicketId()).isEqualTo(42L);
+        assertThat(saved.get(1).getArticleId()).isEqualTo("account-locked");
+    }
+
+    @Test
+    void createSucceedsAndWritesNoSuggestionsWhenEnrichmentClientThrows() {
+        Ticket ticket = new Ticket();
+        ticket.setTitle("New ticket");
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(enrichmentClient.suggestArticles(anyString(), nullable(String.class)))
+                .thenThrow(new RuntimeException("llm down"));
+
+        Ticket created = ticketService.create(ticket);
+
+        assertThat(created.getStatus()).isEqualTo(TicketStatus.OPEN);
+        assertThat(created.getCreatedAt()).isNotNull();
+        verify(suggestedArticleRepository, never()).save(any());
+    }
+
+    @Test
+    void createWritesNoSuggestionsWhenEnrichmentReturnsEmptyList() {
+        Ticket ticket = new Ticket();
+        ticket.setTitle("New ticket");
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ticketService.create(ticket);
+
+        verify(suggestedArticleRepository, never()).save(any());
+    }
+
+    @Test
+    void suggestionsReturnsEntriesForExistingTicket() {
+        Ticket ticket = new Ticket();
+        ticket.setId(1L);
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+        when(suggestedArticleRepository.findByTicketIdOrderByIdAsc(1L))
+                .thenReturn(List.of(new TicketSuggestedArticle(), new TicketSuggestedArticle()));
+
+        List<TicketSuggestedArticle> suggestions = ticketService.suggestions(1L);
+
+        assertThat(suggestions).hasSize(2);
+    }
+
+    @Test
+    void suggestionsThrowsWhenTicketMissing() {
+        when(ticketRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> ticketService.suggestions(99L))
                 .isInstanceOf(TicketNotFoundException.class);
     }
 }
