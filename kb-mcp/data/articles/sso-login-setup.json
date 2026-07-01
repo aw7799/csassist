@@ -1,0 +1,7 @@
+{
+  "id": "sso-login-setup",
+  "title": "Set up single sign-on (SSO) login",
+  "category": "account",
+  "tags": ["sso", "single sign-on", "login", "account", "identity provider"],
+  "body": "# Set up single sign-on (SSO) login\n\nIf your organization has SSO enabled, you can log in using your company identity provider instead of a separate password:\n\n1. Go to the login page and click **Sign in with SSO**.\n2. Enter your company email address and click **Continue**.\n3. You'll be redirected to your organization's identity provider (e.g. Okta, Azure AD, Google Workspace).\n4. Log in with your usual company credentials and approve any MFA prompt.\n5. You'll be redirected back and signed in automatically.\n\nIf your organization doesn't offer the **Sign in with SSO** option yet, contact your IT administrator to have it enabled, or use your regular email and password to log in instead."
+}

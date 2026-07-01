@@ -1,0 +1,7 @@
+{
+  "id": "sso-enable-org",
+  "title": "Enable SSO for your organization",
+  "category": "account",
+  "tags": ["sso", "single sign-on", "admin", "organization", "identity provider"],
+  "body": "# Enable SSO for your organization\n\nOrganization administrators can turn on single sign-on so members log in through your company identity provider:\n\n1. Go to **Admin Settings > Security > Single Sign-On**.\n2. Choose your identity provider type (SAML or OIDC).\n3. Enter the metadata URL or upload the metadata file provided by your identity provider.\n4. Map the required attributes (email, first name, last name) to your provider's claims.\n5. Click **Test connection** to verify a sample login works before enforcing it.\n6. Once verified, click **Enable SSO** to require it for all members.\n\nEnabling SSO does not immediately sign out existing members; they'll be prompted to switch to SSO on their next login. If the test connection fails, double-check the metadata URL and attribute mappings with your identity provider administrator."
+}

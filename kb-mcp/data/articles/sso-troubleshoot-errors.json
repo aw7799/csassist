@@ -1,0 +1,7 @@
+{
+  "id": "sso-troubleshoot-errors",
+  "title": "Troubleshoot SSO login errors",
+  "category": "account",
+  "tags": ["sso", "single sign-on", "troubleshooting", "login", "error"],
+  "body": "# Troubleshoot SSO login errors\n\nIf you can't log in with SSO, try these steps based on the error you see:\n\n- **\"No account found for this email\"** — confirm you're using your company email address, not a personal one. Contact your admin if your account hasn't been provisioned yet.\n- **\"Redirect URI mismatch\" or similar configuration error** — this is usually an identity provider misconfiguration; contact your organization's IT administrator rather than retrying.\n- **Stuck on a blank page after approving MFA** — clear your browser cache and cookies, then try again in a private/incognito window.\n- **\"Session expired\" immediately after redirect** — check that your system clock is set correctly; SSO tokens are time-sensitive.\n\nIf none of these resolve the issue, contact support with the exact error message and the time you attempted to log in so we can check the authentication logs."
+}
