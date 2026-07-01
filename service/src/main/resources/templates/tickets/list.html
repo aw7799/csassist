@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Tickets</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        form.inline { display: inline; }
+    </style>
+</head>
+<body>
+<h1>Tickets</h1>
+<p><a href="/tickets/new">New Ticket</a></p>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Assignee</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ticket : ${tickets}" th:attr="data-ticket-id=${ticket.id}">
+        <td th:text="${ticket.title}"></td>
+        <td th:text="${ticket.status}"></td>
+        <td th:text="${ticket.assignee}"></td>
+        <td>
+            <a th:href="@{/tickets/{id}/edit(id=${ticket.id})}">Edit</a>
+            <form class="inline" method="post" th:action="@{/tickets/{id}/delete(id=${ticket.id})}">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
