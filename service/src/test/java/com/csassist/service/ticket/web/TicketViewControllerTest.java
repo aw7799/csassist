@@ -75,11 +75,13 @@ class TicketViewControllerTest {
         mockMvc.perform(get("/tickets/" + id + "/edit"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("tickets/form"))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Edit target")));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Edit target")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("id=\"status\""))))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("OPEN")));
     }
 
     @Test
-    void updateRedirectsAndPersistsChanges() throws Exception {
+    void updateRedirectsAndPersistsChangesButNeverTouchesStatus() throws Exception {
         mockMvc.perform(post("/tickets")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("title", "Update target")
@@ -89,6 +91,7 @@ class TicketViewControllerTest {
                 .andReturn().getResponse().getContentAsString();
         Long id = extractFirstTicketId(listBody, "Update target");
 
+        // A stray "status" param (as if a client tried to bypass the transition policy) must be ignored.
         mockMvc.perform(post("/tickets/" + id)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("title", "Updated title")
@@ -97,8 +100,10 @@ class TicketViewControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/tickets"));
 
-        mockMvc.perform(get("/tickets"))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Updated title")));
+        String updatedListBody = mockMvc.perform(get("/tickets"))
+                .andReturn().getResponse().getContentAsString();
+        org.assertj.core.api.Assertions.assertThat(updatedListBody).contains("Updated title");
+        org.assertj.core.api.Assertions.assertThat(extractStatusFor(updatedListBody, "Updated title")).isEqualTo("OPEN");
     }
 
     @Test
@@ -126,5 +131,14 @@ class TicketViewControllerTest {
         int idStart = before.lastIndexOf("data-ticket-id=\"") + "data-ticket-id=\"".length();
         int idEnd = before.indexOf('"', idStart);
         return Long.valueOf(before.substring(idStart, idEnd));
+    }
+
+    private String extractStatusFor(String html, String titleMarker) {
+        String titleCell = ">" + titleMarker + "</td>";
+        int titleCellIndex = html.indexOf(titleCell);
+        int statusOpenTag = html.indexOf("<td>", titleCellIndex + titleCell.length());
+        int statusTextStart = statusOpenTag + "<td>".length();
+        int statusTextEnd = html.indexOf("</td>", statusTextStart);
+        return html.substring(statusTextStart, statusTextEnd);
     }
 }

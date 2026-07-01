@@ -1,9 +1,11 @@
 package com.csassist.service.common;
 
+import com.csassist.service.ticket.IllegalTransitionException;
 import com.csassist.service.ticket.TicketNotFoundException;
 import com.csassist.service.ticket.web.TicketRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,5 +30,16 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage());
         }
         return ResponseEntity.badRequest().body(Map.of("errors", errors));
+    }
+
+    @ExceptionHandler(IllegalTransitionException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalTransition(IllegalTransitionException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("currentStatus", ex.getCurrentStatus(), "allowedNext", ex.getAllowedNext()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleMalformedRequest(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(Map.of("message", "Malformed request body"));
     }
 }

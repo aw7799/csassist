@@ -22,11 +22,17 @@
     <label for="description">Description</label>
     <textarea id="description" th:field="*{description}"></textarea>
 
-    <label for="status">Status</label>
-    <select id="status" th:field="*{status}">
-        <option th:each="s : ${T(com.csassist.service.ticket.TicketStatus).values()}"
-                th:value="${s}" th:text="${s}"></option>
-    </select>
+    <div th:if="${!isEdit}">
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}">
+            <option th:each="s : ${T(com.csassist.service.ticket.TicketStatus).values()}"
+                    th:value="${s}" th:text="${s}"></option>
+        </select>
+    </div>
+    <div th:if="${isEdit}">
+        <label>Status</label>
+        <p th:text="${currentStatus}"></p>
+    </div>
 
     <label for="assignee">Assignee</label>
     <input type="text" id="assignee" th:field="*{assignee}"/>

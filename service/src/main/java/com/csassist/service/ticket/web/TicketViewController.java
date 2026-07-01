@@ -3,6 +3,7 @@ package com.csassist.service.ticket.web;
 import com.csassist.service.ticket.Ticket;
 import com.csassist.service.ticket.TicketService;
 import com.csassist.service.ticket.dto.TicketRequest;
+import com.csassist.service.ticket.dto.TicketUpdateRequest;
 import com.csassist.service.ticket.mapper.TicketMapper;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -50,19 +51,21 @@ public class TicketViewController {
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
         Ticket ticket = ticketService.getById(id);
-        TicketRequest request = new TicketRequest(ticket.getTitle(), ticket.getDescription(), ticket.getStatus(), ticket.getAssignee());
+        TicketUpdateRequest request = new TicketUpdateRequest(ticket.getTitle(), ticket.getDescription(), ticket.getAssignee());
         model.addAttribute("ticketRequest", request);
         model.addAttribute("isEdit", true);
         model.addAttribute("ticketId", id);
+        model.addAttribute("currentStatus", ticket.getStatus());
         return "tickets/form";
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, @Valid @ModelAttribute("ticketRequest") TicketRequest request,
+    public String update(@PathVariable Long id, @Valid @ModelAttribute("ticketRequest") TicketUpdateRequest request,
                           BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("isEdit", true);
             model.addAttribute("ticketId", id);
+            model.addAttribute("currentStatus", ticketService.getById(id).getStatus());
             return "tickets/form";
         }
         ticketService.update(id, TicketMapper.toEntity(request));

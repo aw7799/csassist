@@ -1,8 +1,11 @@
 package com.csassist.service.ticket.mapper;
 
 import com.csassist.service.ticket.Ticket;
+import com.csassist.service.ticket.TicketAuditEntry;
+import com.csassist.service.ticket.dto.AuditEntryResponse;
 import com.csassist.service.ticket.dto.TicketRequest;
 import com.csassist.service.ticket.dto.TicketResponse;
+import com.csassist.service.ticket.dto.TicketUpdateRequest;
 
 public final class TicketMapper {
 
@@ -18,6 +21,14 @@ public final class TicketMapper {
         return ticket;
     }
 
+    public static Ticket toEntity(TicketUpdateRequest request) {
+        Ticket ticket = new Ticket();
+        ticket.setTitle(request.title());
+        ticket.setDescription(request.description());
+        ticket.setAssignee(request.assignee());
+        return ticket;
+    }
+
     public static TicketResponse toResponse(Ticket ticket) {
         return new TicketResponse(
                 ticket.getId(),
@@ -27,6 +38,18 @@ public final class TicketMapper {
                 ticket.getAssignee(),
                 ticket.getCreatedAt(),
                 ticket.getUpdatedAt()
+        );
+    }
+
+    public static AuditEntryResponse toAuditResponse(TicketAuditEntry entry) {
+        return new AuditEntryResponse(
+                entry.getId(),
+                entry.getTicketId(),
+                entry.getFromStatus(),
+                entry.getToStatus(),
+                entry.getChangedBy(),
+                entry.getChangedAt(),
+                entry.getNote()
         );
     }
 }

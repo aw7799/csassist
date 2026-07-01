@@ -2,13 +2,17 @@ package com.csassist.service.ticket.web;
 
 import com.csassist.service.ticket.Ticket;
 import com.csassist.service.ticket.TicketService;
+import com.csassist.service.ticket.dto.AuditEntryResponse;
+import com.csassist.service.ticket.dto.StatusChangeRequest;
 import com.csassist.service.ticket.dto.TicketRequest;
 import com.csassist.service.ticket.dto.TicketResponse;
+import com.csassist.service.ticket.dto.TicketUpdateRequest;
 import com.csassist.service.ticket.mapper.TicketMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,7 +51,7 @@ public class TicketRestController {
     }
 
     @PutMapping("/{id}")
-    public TicketResponse update(@PathVariable Long id, @Valid @RequestBody TicketRequest request) {
+    public TicketResponse update(@PathVariable Long id, @Valid @RequestBody TicketUpdateRequest request) {
         Ticket updated = ticketService.update(id, TicketMapper.toEntity(request));
         return TicketMapper.toResponse(updated);
     }
@@ -56,5 +60,16 @@ public class TicketRestController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         ticketService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public TicketResponse changeStatus(@PathVariable Long id, @Valid @RequestBody StatusChangeRequest request) {
+        Ticket updated = ticketService.changeStatus(id, request.toStatus(), request.changedBy(), request.note());
+        return TicketMapper.toResponse(updated);
+    }
+
+    @GetMapping("/{id}/history")
+    public List<AuditEntryResponse> history(@PathVariable Long id) {
+        return ticketService.history(id).stream().map(TicketMapper::toAuditResponse).toList();
     }
 }
